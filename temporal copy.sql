@@ -177,17 +177,17 @@ $BODY$;
 
 
 CREATE OR REPLACE PROCEDURE sp_registrar_pago( 
-  total numeric (8, 2),
-  numCuotas int,
-  estado varchar,
-  MATRICULAid int,
+  p_total numeric (8, 2),
+  p_numCuotas int,
+  p_estado varchar,
+  p_MATRICULAid int,
   OUT msge varchar(100)
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
-		INSERT INTO pago(id_gh, id_alumno, estado, f_pago) VALUES
-    (p_id_gh, p_id_alumno, p_estado, p_f_pago);
+		INSERT INTO pago(total, numCuotas, estado, MATRICULAid) VALUES
+    (p_total, p_numCuotas, p_estado, p_MATRICULAid);
 		msge:=  'Registrado correctamente';
 END
 $BODY$;
@@ -195,16 +195,16 @@ $BODY$;
 
 CREATE OR REPLACE PROCEDURE sp_actualizar_pago(
   p_id int,
-  total numeric (8, 2),
-  numCuotas int,
-  estado varchar,
-  MATRICULAid int,
+  p_total numeric (8, 2),
+  p_numCuotas int,
+  p_estado varchar,
+  p_MATRICULAid int,
   OUT msge varchar(100)
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
-		UPDATE pago SET id_gh = p_id_gh, estado = p_estado, f_pago = p_f_pago WHERE id = p_id AND id_gh = p_id_gh AND id_alumno = p_id_alumno;
+		UPDATE pago SET total = p_total, numCuotas = p_numCuotas, estado = p_estado, MATRICULAid = p_MATRICULAid WHERE id = p_id;
 		msge:=  'Actualizado correctamente';
 END
 $BODY$;
