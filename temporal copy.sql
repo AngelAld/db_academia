@@ -3,12 +3,10 @@
 CREATE OR REPLACE FUNCTION func_listar_cuota()
 RETURNS table(
   id int, 
-  total numeric(8, 2),
-  numCuotas int,
-  estado varchar,
-  MATRICULAid int,
-  alumno varchar,
-  grupo_horario varchar
+  monto numeric(8, 2),
+  fecha_v date,
+  fecha_p date,
+  estado varchar
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
@@ -208,5 +206,3 @@ BEGIN
 		msge:=  'Actualizado correctamente';
 END
 $BODY$;
-
---algo más 
