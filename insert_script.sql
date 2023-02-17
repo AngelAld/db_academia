@@ -9,25 +9,21 @@ INSERT INTO TIPO_DOC_ID(id, desc_larga, desc_corta) VALUES
 
 
 INSERT INTO ROL(nombre, estado) VALUES
-('Administrador', 'ACTIVO'),
+('Administrador', 'ACTIVO'), 
 ('Docente', 'ACTIVO');
 
 
 INSERT INTO USUARIO(id_rol, nombres, usuario, clave, estado, email) VALUES
 (1, 'Juan Perez', 'admin', '5oUg4+minc8HLyFK9FShRg==','ACTIVO', 'juanperez@gmail.com');
 
-insert into DEPORTE(nombre, descripcion, estado) values
-('Futbol', 'Deporte balonpie', 'ACTIVO');
 
+call sp_registrar_deporte('Futbol', 'Deporte futbol', 'ACTIVO', '');
 
-insert into docente(dni, nombres, sexo, estado, direccion, email, telefono) values
-('71448693', 'Angel Aldana', 'M', 'ACTIVO', 'E. G. & G. 1102', 'aaaldana50@gmail.com', '999999999');
+call sp_registrar_deporte('Voley', 'Deporte voleyball','ACTIVO', '');
 
+call sp_registrar_docente('71448693', 'Angel Aldana', 'M', 'ACTIVO', 'E. G. & G. 1102', 'aaaldana50@gmail.com', '999999999', '');
 
-
-insert into ambiente(nombre, descripcion, capacidad, estado) values
-('CANCHA A1', 'Cancha de futbol de concreto en la zona A1', 30, 'ACTIVO');
-
+call sp_registrar_ambiente('CANCHA A1', 'Cancha de futbol de concreto en la zona A1', 30, 'ACTIVO', '');
 
 call sp_registrar_grupo_horario('GH 1 FUTBOL', 1, 1, '2023-2-10', '2023-3-10', 17, 19, 'ACTIVO', 1, '');
 

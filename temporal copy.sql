@@ -3,25 +3,23 @@
 CREATE OR REPLACE FUNCTION func_listar_pago()
 RETURNS table(
   id int, 
-  id_gh int,
-  id_alumno int,
   total numeric(8, 2),
-  estado varchar(12),
-  grupo_horario varchar,
-  alumno varchar
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 	BEGIN
 		RETURN QUERY
 			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
+      p.*,
+      
+      FROM pago p
+      INNER JOIN matricula m on p.MATRICULAid = m.id
+      INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
-			WHERE m.estado != 'ELIMINADO';
+			WHERE p.estado != 'ELIMINADO';
     END;
 $BODY$;
 
