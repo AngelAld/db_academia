@@ -7,9 +7,6 @@ INSERT INTO TIPO_DOC_ID(id, desc_larga, desc_corta) VALUES
 ('00' ,'OTROS', 'OTROS');
 
 
-INSERT INTO ESTADOS(descripcion) VALUES
-('ACTIVO'),
-('INACTIVO');
 
 INSERT INTO ROL(nombre, estado) VALUES
 ('Administrador', 'ACTIVO'),
@@ -36,4 +33,4 @@ call sp_registrar_grupo_horario('GH 1 FUTBOL', 1, 1, '2023-2-10', '2023-3-10', 1
 
 call sp_registrar_alumno('1234567', 'Ivan Galvez', 'M', 'ACTIVO', 'Jaen 403', 'ivgalvez@gmail.com', '987654321', '');
 
-
+call sp_registrar_matricula(1, 1, 'ACTIVO', CURRENT_DATE, '');
