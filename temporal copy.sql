@@ -174,73 +174,13 @@ AS $BODY$
 			WHERE al.nombres LIKE '%'||p_alumno||'%';
 END
 $BODY$;
-------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION func_buscar_pago_fechas
-(
-	p_fecha1 date,
-	p_fecha2 date
-)
-RETURNS table(
-  id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
-)
-LANGUAGE 'plpgsql'
-AS $BODY$
-	BEGIN
-		RETURN QUERY
-			SELECT
-      p.*,
-      al.nombres as alumno,
-      gh.nombre as grupo_horario
-      FROM pago p
-      INNER JOIN matricula m on p.MATRICULAid = m.id
-      INNER JOIN ALUMNO al on m.id_alumno = al.id
-      INNER JOIN grupo_horario gh on m.id_gh = gh.id
-			WHERE (m.f_pago >= p_fecha1 AND m.f_pago <= p_fecha2) AND m.estado != 'ELIMINADO';
-END
-$BODY$;
-
-
-CREATE OR REPLACE FUNCTION func_buscar_pago_fechas_admin
-(
-	p_fecha1 date,
-	p_fecha2 date
-)
-RETURNS table(
-  id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
-)
-LANGUAGE 'plpgsql'
-AS $BODY$
-	BEGIN
-		RETURN QUERY
-			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
-      INNER JOIN grupo_horario gh on m.id_gh = gh.id
-			WHERE (m.f_pago >= p_fecha1 AND m.f_pago <= p_fecha2);
-END
-$BODY$;
 
 
 CREATE OR REPLACE PROCEDURE sp_registrar_pago( 
-  p_id_gh int,
-  p_id_alumno int,
-  p_estado varchar(12),
-  p_f_pago date,
+  total numeric (8, 2),
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
   OUT msge varchar(100)
 )
 LANGUAGE 'plpgsql'
@@ -255,10 +195,10 @@ $BODY$;
 
 CREATE OR REPLACE PROCEDURE sp_actualizar_pago(
   p_id int,
-  p_id_gh int,
-  p_id_alumno int,
-  p_estado varchar(12),
-  p_f_pago date,
+  total numeric (8, 2),
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
   OUT msge varchar(100)
 )
 LANGUAGE 'plpgsql'
