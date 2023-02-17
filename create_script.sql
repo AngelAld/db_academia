@@ -141,9 +141,9 @@ CREATE TABLE USUARIO (
   nombres varchar(255) NOT NULL UNIQUE, 
   usuario varchar(255) NOT NULL UNIQUE, 
   clave   varchar(255) NOT NULL, 
-  estado  varchar(12) NOT NULL, 
-  email   varchar(255) NOT NULL, 
   token   char(6), 
+  email   varchar(255) NOT NULL, 
+  estado  varchar(12) NOT NULL, 
   PRIMARY KEY (id));
 ALTER TABLE GRUPO_HORARIO ADD CONSTRAINT FKGRUPO_HORA389472 FOREIGN KEY (id_deporte) REFERENCES DEPORTE (id);
 ALTER TABLE GRUPO_HORARIO ADD CONSTRAINT FKGRUPO_HORA420958 FOREIGN KEY (id_docente) REFERENCES DOCENTE (id);

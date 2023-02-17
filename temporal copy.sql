@@ -7,6 +7,8 @@ RETURNS table(
   numCuotas int,
   estado varchar,
   MATRICULAid int,
+  alumno varchar,
+  grupo_horario varchar
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
@@ -14,7 +16,8 @@ AS $BODY$
 		RETURN QUERY
 			SELECT
       p.*,
-      
+      al.nombres as alumno,
+      gh.nombre as grupo_horario
       FROM pago p
       INNER JOIN matricula m on p.MATRICULAid = m.id
       INNER JOIN ALUMNO al on m.id_alumno = al.id
@@ -27,23 +30,24 @@ $BODY$;
 CREATE OR REPLACE FUNCTION func_listar_pago_admin()
 RETURNS table(
   id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
+  total numeric(8, 2),
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
+  alumno varchar,
+  grupo_horario varchar
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 	BEGIN
 		RETURN QUERY
 			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
+      p.*,
+      al.nombres as alumno,
+      gh.nombre as grupo_horario
+      FROM pago p
+      INNER JOIN matricula m on p.MATRICULAid = m.id
+      INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id;
     END;
 $BODY$;
@@ -56,23 +60,24 @@ CREATE OR REPLACE FUNCTION func_buscar_pago
 )
 RETURNS table(
   id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
+  total numeric(8, 2),
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
+  alumno varchar,
+  grupo_horario varchar
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 	BEGIN
 		RETURN QUERY
 			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
+      p.*,
+      al.nombres as alumno,
+      gh.nombre as grupo_horario
+      FROM pago p
+      INNER JOIN matricula m on p.MATRICULAid = m.id
+      INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
 			WHERE m.id = p_id AND m.estado != 'ELIMINADO';
 END
@@ -86,23 +91,24 @@ CREATE OR REPLACE FUNCTION func_buscar_pago_admin
 )
 RETURNS table(
   id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
+  total numeric(8, 2),
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
+  alumno varchar,
+  grupo_horario varchar
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 	BEGIN
 		RETURN QUERY
 			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
+      p.*,
+      al.nombres as alumno,
+      gh.nombre as grupo_horario
+      FROM pago p
+      INNER JOIN matricula m on p.MATRICULAid = m.id
+      INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
 			WHERE m.id = p_id;
 END
@@ -116,23 +122,24 @@ CREATE OR REPLACE FUNCTION func_buscar_pago_alumno
 )
 RETURNS table(
   id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
+  total numeric(8, 2),
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
+  alumno varchar,
+  grupo_horario varchar
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 	BEGIN
 		RETURN QUERY
 			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
+      p.*,
+      al.nombres as alumno,
+      gh.nombre as grupo_horario
+      FROM pago p
+      INNER JOIN matricula m on p.MATRICULAid = m.id
+      INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
 			WHERE al.nombres LIKE '%'||p_alumno||'%' AND m.estado != 'ELIMINADO';
 END
@@ -145,90 +152,29 @@ CREATE OR REPLACE FUNCTION func_buscar_pago_alumno_admin
 )
 RETURNS table(
   id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
+  total numeric(8, 2),
+  numCuotas int,
+  estado varchar,
+  MATRICULAid int,
+  alumno varchar,
+  grupo_horario varchar
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 	BEGIN
 		RETURN QUERY
 			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
+      p.*,
+      al.nombres as alumno,
+      gh.nombre as grupo_horario
+      FROM pago p
+      INNER JOIN matricula m on p.MATRICULAid = m.id
+      INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
 			WHERE al.nombres LIKE '%'||p_alumno||'%';
 END
 $BODY$;
 ------------------------------------------------------------------------------
-
-CREATE OR REPLACE FUNCTION func_buscar_pago_docente
-(
-  p_docente VARCHAR(100)
-)
-RETURNS table(
-  id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
-)
-LANGUAGE 'plpgsql'
-AS $BODY$
-	BEGIN
-		RETURN QUERY
-			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
-      INNER JOIN grupo_horario gh on m.id_gh = gh.id
-      INNER JOIN docente doc on gh.id_docente = doc.id
-			WHERE doc.nombres LIKE '%'||p_docente||'%' AND m.estado != 'ELIMINADO';
-END
-$BODY$;
-
-
-CREATE OR REPLACE FUNCTION func_buscar_pago_docente_admin 
-(
-  p_docente VARCHAR(100)
-)
-RETURNS table(
-  id int, 
-  id_gh int,
-  id_alumno int,
-  estado varchar(12),
-  f_pago date,
-  grupo_horario varchar,
-  alumno varchar
-)
-LANGUAGE 'plpgsql'
-AS $BODY$
-	BEGIN
-		RETURN QUERY
-			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
-      INNER JOIN grupo_horario gh on m.id_gh = gh.id
-      INNER JOIN docente doc on gh.id_docente = doc.id
-			WHERE doc.nombres LIKE '%'||p_docente||'%';
-END
-$BODY$;
-------------------------------------------------------------------------------
-
-
 CREATE OR REPLACE FUNCTION func_buscar_pago_fechas
 (
 	p_fecha1 date,
@@ -248,11 +194,12 @@ AS $BODY$
 	BEGIN
 		RETURN QUERY
 			SELECT
-      m.*,
-      gh.nombre as grupo_horario,
-      al.nombres as alumno
-      FROM pago m
-      INNER JOIN alumno al on m.id_alumno = al.id
+      p.*,
+      al.nombres as alumno,
+      gh.nombre as grupo_horario
+      FROM pago p
+      INNER JOIN matricula m on p.MATRICULAid = m.id
+      INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
 			WHERE (m.f_pago >= p_fecha1 AND m.f_pago <= p_fecha2) AND m.estado != 'ELIMINADO';
 END
