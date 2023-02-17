@@ -1,6 +1,6 @@
-/* PAGO */
+/* CUOTA */
 
-CREATE OR REPLACE FUNCTION func_listar_pago()
+CREATE OR REPLACE FUNCTION func_listar_cuota()
 RETURNS table(
   id int, 
   total numeric(8, 2),
@@ -18,7 +18,7 @@ AS $BODY$
       p.*,
       al.nombres as alumno,
       gh.nombre as grupo_horario
-      FROM pago p
+      FROM cuota p
       INNER JOIN matricula m on p.MATRICULAid = m.id
       INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
@@ -27,7 +27,7 @@ AS $BODY$
 $BODY$;
 
 
-CREATE OR REPLACE FUNCTION func_listar_pago_admin()
+CREATE OR REPLACE FUNCTION func_listar_cuota_admin()
 RETURNS table(
   id int, 
   total numeric(8, 2),
@@ -45,7 +45,7 @@ AS $BODY$
       p.*,
       al.nombres as alumno,
       gh.nombre as grupo_horario
-      FROM pago p
+      FROM cuota p
       INNER JOIN matricula m on p.MATRICULAid = m.id
       INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id;
@@ -54,7 +54,7 @@ $BODY$;
 
 
 
-CREATE OR REPLACE FUNCTION func_buscar_pago
+CREATE OR REPLACE FUNCTION func_buscar_cuota
 (
   p_id int
 )
@@ -75,7 +75,7 @@ AS $BODY$
       p.*,
       al.nombres as alumno,
       gh.nombre as grupo_horario
-      FROM pago p
+      FROM cuota p
       INNER JOIN matricula m on p.MATRICULAid = m.id
       INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
@@ -85,7 +85,7 @@ $BODY$;
 
 
 
-CREATE OR REPLACE FUNCTION func_buscar_pago_admin
+CREATE OR REPLACE FUNCTION func_buscar_cuota_admin
 (
   p_id int
 )
@@ -106,7 +106,7 @@ AS $BODY$
       p.*,
       al.nombres as alumno,
       gh.nombre as grupo_horario
-      FROM pago p
+      FROM cuota p
       INNER JOIN matricula m on p.MATRICULAid = m.id
       INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
@@ -116,7 +116,7 @@ $BODY$;
 
 
 
-CREATE OR REPLACE FUNCTION func_buscar_pago_alumno
+CREATE OR REPLACE FUNCTION func_buscar_cuota_alumno
 (
   p_alumno VARCHAR(100)
 )
@@ -137,7 +137,7 @@ AS $BODY$
       p.*,
       al.nombres as alumno,
       gh.nombre as grupo_horario
-      FROM pago p
+      FROM cuota p
       INNER JOIN matricula m on p.MATRICULAid = m.id
       INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
@@ -146,7 +146,7 @@ END
 $BODY$;
 
 
-CREATE OR REPLACE FUNCTION func_buscar_pago_alumno_admin 
+CREATE OR REPLACE FUNCTION func_buscar_cuota_alumno_admin 
 (
   p_alumno VARCHAR(100)
 )
@@ -167,7 +167,7 @@ AS $BODY$
       p.*,
       al.nombres as alumno,
       gh.nombre as grupo_horario
-      FROM pago p
+      FROM cuota p
       INNER JOIN matricula m on p.MATRICULAid = m.id
       INNER JOIN ALUMNO al on m.id_alumno = al.id
       INNER JOIN grupo_horario gh on m.id_gh = gh.id
@@ -176,7 +176,7 @@ END
 $BODY$;
 
 
-CREATE OR REPLACE PROCEDURE sp_registrar_pago( 
+CREATE OR REPLACE PROCEDURE sp_registrar_cuota( 
   p_total numeric (8, 2),
   p_numCuotas int,
   p_estado varchar,
@@ -186,14 +186,14 @@ CREATE OR REPLACE PROCEDURE sp_registrar_pago(
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
-		INSERT INTO pago(total, numCuotas, estado, MATRICULAid) VALUES
+		INSERT INTO cuota(total, numCuotas, estado, MATRICULAid) VALUES
     (p_total, p_numCuotas, p_estado, p_MATRICULAid);
 		msge:=  'Registrado correctamente';
 END
 $BODY$;
 
 
-CREATE OR REPLACE PROCEDURE sp_actualizar_pago(
+CREATE OR REPLACE PROCEDURE sp_actualizar_cuota(
   p_id int,
   p_total numeric (8, 2),
   p_numCuotas int,
@@ -204,7 +204,7 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_pago(
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
-		UPDATE pago SET total = p_total, numCuotas = p_numCuotas, estado = p_estado, MATRICULAid = p_MATRICULAid WHERE id = p_id;
+		UPDATE cuota SET total = p_total, numCuotas = p_numCuotas, estado = p_estado, MATRICULAid = p_MATRICULAid WHERE id = p_id;
 		msge:=  'Actualizado correctamente';
 END
 $BODY$;
