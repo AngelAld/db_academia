@@ -1,5 +1,4 @@
--- 1120 x 900 desktop pane 
--- aun así intenta rezisearlo
 
--- faltan los formularios de las bolestas 
+-- faltan los formularios de los comprobantes
 
+--IVAN ESTÁ HACIENDO DEPORTE AMBIENTE Y ALUMNO 
