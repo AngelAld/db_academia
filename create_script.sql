@@ -50,7 +50,7 @@ CREATE TABLE CUOTA (
   id              SERIAL NOT NULL, 
   monto           numeric(8, 2) NOT NULL, 
   fecha_v         date NOT NULL, 
-  fecha_p         date NOT NULL, 
+  fecha_p         date, 
   estado          varchar(12) NOT NULL, 
   id_pago         int4 NOT NULL, 
   id_gh           int4 NOT NULL, 
