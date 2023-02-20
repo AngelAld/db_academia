@@ -1,7 +1,8 @@
 
+ImageIcon icon = new ImageIcon(getClass().getResource("/recursos/back.jpg"));
+Image image = icon.getImage();
 
- jDesktopPane1 = new javax.swing.JDesktopPane(){
-
+jDesktopPane1 = new javax.swing.JDesktopPane(){
  public void paintComponent(Graphics g){
  g.drawImage(image,0,0,getWidth(),getHeight(),this);
  }
