@@ -15,6 +15,10 @@ INSERT INTO ROL(nombre, estado) VALUES
 
 INSERT INTO USUARIO(id_rol, nombres, usuario, clave, estado, email) VALUES
 (1, 'Juan Perez', 'admin', '5oUg4+minc8HLyFK9FShRg==','ACTIVO', 'juanperez@gmail.com');
+INSERT INTO USUARIO(id_rol, nombres, usuario, clave, estado, email) VALUES
+(1, 'Angel Aldana', 'admin2', '5oUg4+minc8HLyFK9FShRg==','ACTIVO', 'aaaldana50@gmail.com');
+INSERT INTO USUARIO(id_rol, nombres, usuario, clave, estado, email) VALUES
+(1, 'Ivan Galvez', 'admin3', '5oUg4+minc8HLyFK9FShRg==','ACTIVO', 'sample@gmail.com');
 
 
 call sp_registrar_deporte('Futbol', 'Deporte futbol', 'ACTIVO', '');
