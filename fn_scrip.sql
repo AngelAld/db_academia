@@ -1,3 +1,199 @@
+/* USUARIO */
+
+CREATE OR REPLACE FUNCTION func_login
+(p_usuario VARCHAR(20),
+p_clave VARCHAR(100)
+)
+RETURNS TABLE(
+	id integer, idrole integer, nombres VARCHAR(100), usuario VARCHAR(100),
+	clave VARCHAR(100), token VARCHAR(50), correo VARCHAR(100), estado VARCHAR(12), role VARCHAR(50))
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	RETURN QUERY
+		SELECT 
+			u.*, r.nombre as role
+		FROM usuarios u
+			INNER JOIN roles r on r.id=u.idrole
+		WHERE u.usuario=p_usuario AND u.clave=p_clave AND u.estado='ACTIVO';
+END
+$BODY$;
+
+
+/* USUARIOS */
+CREATE OR REPLACE FUNCTION func_listar_usuarios()
+RETURNS TABLE(
+	id integer, 
+	idrole integer, 
+	nombres VARCHAR(100), 
+	usuario VARCHAR(100),
+	clave VARCHAR(100), 
+	token VARCHAR(50), 
+	correo VARCHAR(100), 
+	estado VARCHAR(12), 
+	role VARCHAR(50)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+	BEGIN
+		RETURN QUERY
+			SELECT
+				u.*, r.nombre AS role
+			FROM usuarios u
+				INNER JOIN roles r ON r.id=u.idrole;
+    END;
+$BODY$;
+
+CREATE OR REPLACE FUNCTION func_buscar_usuario_id
+(p_id INT
+)
+RETURNS TABLE(
+	id integer, 
+	idrole integer, 
+	nombres VARCHAR(100), 
+	usuario VARCHAR(100),
+	clave VARCHAR(100), 
+	token VARCHAR(50), 
+	correo VARCHAR(100), 
+	estado VARCHAR(12), 
+	role VARCHAR(50)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	RETURN QUERY
+		SELECT
+			u.*, r.nombre AS role
+		FROM usuarios u
+			INNER JOIN roles r ON r.id=u.idrole
+		WHERE u.id=p_id;
+END
+$BODY$;
+
+CREATE OR REPLACE FUNCTION func_buscar_usuario_nombre
+(p_nombre VARCHAR(50)
+)
+RETURNS SETOF usuarios
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	RETURN QUERY
+		SELECT * FROM usuarios WHERE nombres LIKE '%'||p_nombre||'%';
+END
+$BODY$;
+
+CREATE OR REPLACE FUNCTION func_buscar_usuario_email
+(p_correo VARCHAR(100)
+)
+RETURNS SETOF usuarios
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	RETURN QUERY
+		SELECT * FROM usuarios WHERE correo=p_correo AND estado='ACTIVO' LIMIT 1;
+END
+$BODY$;
+
+CREATE OR REPLACE FUNCTION func_buscar_usuario_token
+(p_token VARCHAR(50)
+)
+RETURNS SETOF usuarios
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	RETURN QUERY
+		SELECT * FROM usuarios WHERE token=p_token AND estado='ACTIVO' LIMIT 1;
+END
+$BODY$;
+
+CREATE OR REPLACE PROCEDURE sp_registrar_usuario
+(p_idrole INT, 
+p_nombres VARCHAR(100), 
+p_usuario VARCHAR(20), 
+p_clave VARCHAR(100),
+p_correo VARCHAR(100),
+p_estado VARCHAR(12),
+OUT msge varchar(100)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+ 	IF(EXISTS(SELECT * FROM usuarios WHERE usuario=p_usuario))THEN
+ 		msge:=  'El usuario: '||p_usuario||', ya existe';
+	ELSEIF(p_correo IS NULL)THEN
+		INSERT INTO usuarios (idrole,nombres,usuario,clave,correo,estado) VALUES(p_idrole,p_nombres,p_usuario,p_clave,p_correo,p_estado);
+		msge:=  'Registrado correctamente';
+	ELSEIF(p_correo IS NOT NULL)THEN
+		IF(EXISTS(SELECT * FROM usuarios WHERE correo=p_correo))THEN
+			msge:=  'El correo: '||p_correo||', ya existe';
+		ELSE
+			INSERT INTO usuarios (idrole,nombres,usuario,clave,correo,estado) VALUES(p_idrole,p_nombres,p_usuario,p_clave,p_correo,p_estado);
+			msge:=  'Registrado correctamente';
+		END IF;
+	END IF;
+END
+$BODY$;
+
+CREATE OR REPLACE PROCEDURE sp_actualizar_usuario
+(p_id INT,
+p_idrole INT, 
+p_nombres VARCHAR(100), 
+p_usuario VARCHAR(20), 
+p_clave VARCHAR(100),
+p_correo VARCHAR(100),
+p_estado VARCHAR(12),
+OUT msge varchar(100)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+ 	IF(EXISTS(SELECT * FROM usuarios WHERE usuario=p_usuario AND id<>p_id))THEN
+ 		msge:=  'El usuario: '||p_descripcion||', ya existe';
+	ELSE
+		UPDATE usuarios SET idrole=p_idrole,nombres=p_nombres,usuario=p_usuario,clave=p_clave,correo=p_correo,estado=p_estado WHERE id=p_id;
+		msge:=  'Actualizado correctamente';
+	END IF;
+END
+$BODY$;
+
+CREATE OR REPLACE PROCEDURE sp_actualizar_usuario_token
+(p_id INT, 
+p_token VARCHAR(50),
+OUT msge varchar(100)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	IF(p_token = '')THEN
+		p_token := NULL;
+	END IF;
+ 	IF(NOT EXISTS(SELECT * FROM usuarios WHERE id=p_id))THEN
+ 		msge:=  'El usuario no existe';
+	ELSE
+		UPDATE usuarios SET token=p_token WHERE id=p_id;
+		msge:=  'Actualizado correctamente';
+	END IF;
+END
+$BODY$;
+
+CREATE OR REPLACE PROCEDURE sp_actualizar_usuario_clave
+(p_id INT, 
+p_password VARCHAR(100),
+OUT msge VARCHAR(100)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+ 	IF(NOT EXISTS(SELECT * FROM usuarios WHERE id=p_id))THEN
+ 		msge:=  'El usuario no existe';
+	ELSE
+		UPDATE usuarios SET password=p_password,token=NULL WHERE id=p_id;
+		msge:=  'Actualizado correctamente';
+	END IF;
+END
+$BODY$;
+
+
 /* ALUMNO */
 
 CREATE OR REPLACE FUNCTION func_listar_alumno()
@@ -1403,7 +1599,8 @@ AS $BODY$
 $BODY$;
 
 
-CREATE OR REPLACE FUNCTION func_buscar_cuota_pago
+CREATE OR REPLACE FUNCTION 
+
 (
   p_id_pago int
 )
