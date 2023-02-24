@@ -30,3 +30,7 @@ call sp_registrar_grupo_horario('GH 1 FUTBOL', 1, 1, '2023-2-10', '2023-3-10', 1
 call sp_registrar_alumno('1234567', 'Ivan Galvez', 'M', 'ACTIVO', 'Jaen 403', 'ivgalvez@gmail.com', '987654321', '');
 
 call sp_registrar_matricula(1, 1, 'ACTIVO', CURRENT_DATE, '');
+
+call sp_registrar_pago(200.00, 1, 'PENDIENTE', 1, '');
+
+call sp_registrar_cuota(200.00, CURRENT_DATE, CURRENT_DATE, 'PAGADO', 1, '');

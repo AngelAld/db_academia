@@ -53,9 +53,6 @@ CREATE TABLE CUOTA (
   fecha_p         date, 
   estado          varchar(12) NOT NULL, 
   id_pago         int4 NOT NULL, 
-  id_gh           int4 NOT NULL, 
-  id_alumno       int4 NOT NULL, 
-  PAGOMATRICULAid int4, 
   PRIMARY KEY (id));
 CREATE TABLE DEPORTE (
   id          SERIAL NOT NULL, 

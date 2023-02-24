@@ -667,7 +667,7 @@ AS $BODY$
 			INNER JOIN deporte dep on gh.id_deporte = dep.id
 			INNER JOIN docente d on gh.id_docente = d.id
 			INNER JOIN ambiente a on gh.id_ambiente = a.id
-			WHERE nombre LIKE '%'||p_nombre||'%' AND gh.estado != 'ELIMINADO';
+			WHERE gh.nombre LIKE '%'||p_nombre||'%' AND gh.estado != 'ELIMINADO';
 END
 $BODY$;
 

@@ -161,3 +161,12 @@ ALTER TABLE TICKET ADD CONSTRAINT FKTICKET833352 FOREIGN KEY (t_doc_id) REFERENC
 ALTER TABLE TICKET ADD CONSTRAINT FKTICKET803106 FOREIGN KEY (id_cuota) REFERENCES CUOTA (id);
 
 ```
+
+#### FUNCTIONS:
+
+```
+select * from func_listar_alumno();
+select * from func_listar_alumno_admin();
+select * from func_buscar_alumno(1);
+
+```
