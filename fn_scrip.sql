@@ -1,3 +1,78 @@
+DROP FUNCTION IF EXISTS func_login;
+DROP FUNCTION IF EXISTS func_listar_usuarios;
+DROP FUNCTION IF EXISTS func_buscar_usuario_id;
+
+/* ROLES */
+CREATE OR REPLACE FUNCTION func_listar_roles()
+RETURNS SETOF roles
+LANGUAGE 'plpgsql'
+AS $BODY$
+	BEGIN
+		RETURN QUERY
+			SELECT * FROM roles;
+    END;
+$BODY$;
+
+CREATE OR REPLACE FUNCTION func_buscar_role
+(p_id INT
+)
+RETURNS SETOF roles
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	RETURN QUERY
+		SELECT * FROM roles WHERE id=p_id;
+END
+$BODY$;
+
+CREATE OR REPLACE FUNCTION func_buscar_role_nombre
+(p_nombre VARCHAR(100)
+)
+RETURNS SETOF roles
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	RETURN QUERY
+		SELECT * FROM roles WHERE nombre LIKE '%'||p_nombre||'%';
+END
+$BODY$;
+
+CREATE OR REPLACE PROCEDURE sp_registrar_role
+(p_nombre varchar(50),
+p_estado varchar(12),
+OUT msge varchar(100)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+ 	IF(EXISTS(SELECT * FROM roles WHERE nombre=p_nombre))THEN
+ 		msge:=  'El rol: '||p_nombre||', ya existe';
+	ELSE
+		INSERT INTO roles (nombre,estado) VALUES(p_nombre, p_estado);
+		msge:=  'Registrado correctamente';
+	END IF;
+END
+$BODY$;
+
+CREATE OR REPLACE PROCEDURE sp_actualizar_role
+(p_id INT,
+p_nombre varchar(50),
+p_estado varchar(12),
+OUT msge varchar(100)
+)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+ 	IF(EXISTS(SELECT * FROM roles WHERE nombre=p_nombre AND id<>p_id))THEN
+ 		msge:=  'El rol: '||p_nombre||', ya existe';
+	ELSE
+		UPDATE roles SET nombre=p_nombre,estado=p_estado WHERE id=p_id;
+		msge:=  'Actualizado correctamente';
+	END IF;
+END
+$BODY$;
+
+
 /* USUARIO */
 
 CREATE OR REPLACE FUNCTION func_login
@@ -5,30 +80,36 @@ CREATE OR REPLACE FUNCTION func_login
 p_clave VARCHAR(100)
 )
 RETURNS TABLE(
-	id integer, idrole integer, nombres VARCHAR(100), usuario VARCHAR(100),
-	clave VARCHAR(100), token VARCHAR(50), email VARCHAR(100), estado VARCHAR(12), role VARCHAR(50))
+	id integer,
+  id_rol integer, 
+  nombres VARCHAR(100), 
+  usuario VARCHAR(100),
+	clave VARCHAR(100), 
+  token char(6), 
+  email VARCHAR(100), 
+  estado VARCHAR(12), 
+  role VARCHAR(50))
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
 		SELECT 
-			u.*, r.nombre as role
+			u.*, 
+      	r.nombre as role
 		FROM usuario u
-			INNER JOIN roles r on r.id=u.idrole
+			INNER JOIN roles r on r.id=u.id_rol
 		WHERE u.usuario=p_usuario AND u.clave=p_clave AND u.estado='ACTIVO';
 END
 $BODY$;
 
-
-/* USUARIO */
 CREATE OR REPLACE FUNCTION func_listar_usuarios()
 RETURNS TABLE(
 	id integer, 
-	idrole integer, 
+	id_rol integer, 
 	nombres VARCHAR(100), 
 	usuario VARCHAR(100),
 	clave VARCHAR(100), 
-	token VARCHAR(50), 
+	token char(6), 
 	email VARCHAR(100), 
 	estado VARCHAR(12), 
 	role VARCHAR(50)
@@ -40,7 +121,7 @@ AS $BODY$
 			SELECT
 				u.*, r.nombre AS role
 			FROM usuario u
-				INNER JOIN roles r ON r.id=u.idrole;
+				INNER JOIN roles r ON r.id=u.id_rol;
     END;
 $BODY$;
 
@@ -49,11 +130,11 @@ CREATE OR REPLACE FUNCTION func_buscar_usuario_id
 )
 RETURNS TABLE(
 	id integer, 
-	idrole integer, 
+	id_rol integer, 
 	nombres VARCHAR(100), 
 	usuario VARCHAR(100),
 	clave VARCHAR(100), 
-	token VARCHAR(50), 
+	token char(6), 
 	email VARCHAR(100), 
 	estado VARCHAR(12), 
 	role VARCHAR(50)
@@ -65,7 +146,7 @@ BEGIN
 		SELECT
 			u.*, r.nombre AS role
 		FROM usuario u
-			INNER JOIN roles r ON r.id=u.idrole
+			INNER JOIN roles r ON r.id=u.id_rol
 		WHERE u.id=p_id;
 END
 $BODY$;
@@ -95,7 +176,7 @@ END
 $BODY$;
 
 CREATE OR REPLACE FUNCTION func_buscar_usuario_token
-(p_token VARCHAR(50)
+(p_token char(6)
 )
 RETURNS SETOF usuario
 LANGUAGE 'plpgsql'
@@ -107,7 +188,7 @@ END
 $BODY$;
 
 CREATE OR REPLACE PROCEDURE sp_registrar_usuario
-(p_idrole INT, 
+(p_id_rol INT, 
 p_nombres VARCHAR(100), 
 p_usuario VARCHAR(20), 
 p_clave VARCHAR(100),
@@ -121,13 +202,13 @@ BEGIN
  	IF(EXISTS(SELECT * FROM usuario WHERE usuario=p_usuario))THEN
  		msge:=  'El usuario: '||p_usuario||', ya existe';
 	ELSEIF(p_email IS NULL)THEN
-		INSERT INTO usuario (idrole,nombres,usuario,clave,email,estado) VALUES(p_idrole,p_nombres,p_usuario,p_clave,p_email,p_estado);
+		INSERT INTO usuario (id_rol,nombres,usuario,clave,email,estado) VALUES(p_id_rol,p_nombres,p_usuario,p_clave,p_email,p_estado);
 		msge:=  'Registrado correctamente';
 	ELSEIF(p_email IS NOT NULL)THEN
 		IF(EXISTS(SELECT * FROM usuario WHERE email=p_email))THEN
 			msge:=  'El email: '||p_email||', ya existe';
 		ELSE
-			INSERT INTO usuario (idrole,nombres,usuario,clave,email,estado) VALUES(p_idrole,p_nombres,p_usuario,p_clave,p_email,p_estado);
+			INSERT INTO usuario (id_rol,nombres,usuario,clave,email,estado) VALUES(p_id_rol,p_nombres,p_usuario,p_clave,p_email,p_estado);
 			msge:=  'Registrado correctamente';
 		END IF;
 	END IF;
@@ -136,7 +217,7 @@ $BODY$;
 
 CREATE OR REPLACE PROCEDURE sp_actualizar_usuario
 (p_id INT,
-p_idrole INT, 
+p_id_rol INT, 
 p_nombres VARCHAR(100), 
 p_usuario VARCHAR(20), 
 p_clave VARCHAR(100),
@@ -150,7 +231,7 @@ BEGIN
  	IF(EXISTS(SELECT * FROM usuario WHERE usuario=p_usuario AND id<>p_id))THEN
  		msge:=  'El usuario: '||p_descripcion||', ya existe';
 	ELSE
-		UPDATE usuario SET idrole=p_idrole,nombres=p_nombres,usuario=p_usuario,clave=p_clave,email=p_email,estado=p_estado WHERE id=p_id;
+		UPDATE usuario SET id_rol=p_id_rol,nombres=p_nombres,usuario=p_usuario,clave=p_clave,email=p_email,estado=p_estado WHERE id=p_id;
 		msge:=  'Actualizado correctamente';
 	END IF;
 END
@@ -158,7 +239,7 @@ $BODY$;
 
 CREATE OR REPLACE PROCEDURE sp_actualizar_usuario_token
 (p_id INT, 
-p_token VARCHAR(50),
+p_token char(6),
 OUT msge varchar(100)
 )
 LANGUAGE 'plpgsql'
@@ -519,6 +600,7 @@ AS $BODY$
 BEGIN
 	RETURN QUERY
 		SELECT * FROM deporte WHERE UPPER(nombre) LIKE '%'||UPPER(p_nombre)||'%';
+END
 $BODY$;
 
 

@@ -8,7 +8,7 @@ INSERT INTO TIPO_DOC_ID(id, desc_larga, desc_corta) VALUES
 
 
 
-INSERT INTO ROL(nombre, estado) VALUES
+INSERT INTO ROLES(nombre, estado) VALUES
 ('Administrador', 'ACTIVO'), 
 ('Docente', 'ACTIVO');
 
