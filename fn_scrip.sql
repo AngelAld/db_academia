@@ -71,14 +71,14 @@ END
 $BODY$;
 
 CREATE OR REPLACE FUNCTION func_buscar_usuario_nombre
-(p_nombre VARCHAR(50)
+(p_nombres VARCHAR(50)
 )
 RETURNS SETOF usuario
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM usuario WHERE nombres LIKE '%'||p_nombre||'%';
+		SELECT * FROM usuario WHERE UPPER(nombres) LIKE '%'||UPPER(p_nombres)||'%';
 END
 $BODY$;
 
@@ -255,7 +255,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM alumno WHERE nombres LIKE '%'||p_nombres||'%' AND estado != 'ELIMINADO';
+		SELECT * FROM alumno WHERE UPPER(nombres) LIKE '%'||UPPER(p_nombres)||'%' AND estado != 'ELIMINADO';
 END
 $BODY$;
 
@@ -268,7 +268,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM alumno WHERE nombres LIKE '%'||p_nombres||'%';
+		SELECT * FROM alumno WHERE UPPER(nombres) LIKE '%'||UPPER(p_nombres)||'%';
 END
 $BODY$;
 
@@ -382,7 +382,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM ambiente WHERE nombre LIKE '%'||p_nombre||'%' AND estado != 'ELIMINADO';
+		SELECT * FROM ambiente WHERE UPPER(nombre) LIKE '%'||UPPER(p_nombre)||'%' AND estado != 'ELIMINADO';
 END
 $BODY$;
 
@@ -395,7 +395,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM ambiente WHERE nombre LIKE '%'||p_nombre||'%';
+		SELECT * FROM ambiente WHERE UPPER(nombre) LIKE '%'||UPPER(p_nombre)||'%';
 END
 $BODY$;
 
@@ -505,7 +505,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM deporte WHERE nombre LIKE '%'||p_nombre||'%' AND estado != 'ELIMINADO';
+		SELECT * FROM deporte WHERE UPPER(nombre) LIKE '%'||UPPER(p_nombre)||'%' AND estado != 'ELIMINADO';
 END
 $BODY$;
 
@@ -518,8 +518,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM deporte WHERE nombre LIKE '%'||p_nombre||'%';
-END
+		SELECT * FROM deporte WHERE UPPER(nombre) LIKE '%'||UPPER(p_nombre)||'%';
 $BODY$;
 
 
@@ -625,7 +624,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM docente WHERE nombres LIKE '%'||p_nombres||'%' AND estado != 'ELIMINADO';
+		SELECT * FROM docente WHERE UPPER(nombres) LIKE '%'||UPPER(p_nombres)||'%' AND estado != 'ELIMINADO';
 END
 $BODY$;
 
@@ -638,7 +637,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
 	RETURN QUERY
-		SELECT * FROM docente WHERE nombres LIKE '%'||p_nombres||'%';
+		SELECT * FROM docente WHERE UPPER(nombres) LIKE '%'||UPPER(p_nombres)||'%';
 END
 $BODY$;
 
@@ -863,7 +862,7 @@ AS $BODY$
 			INNER JOIN deporte dep on gh.id_deporte = dep.id
 			INNER JOIN docente d on gh.id_docente = d.id
 			INNER JOIN ambiente a on gh.id_ambiente = a.id
-			WHERE gh.nombre LIKE '%'||p_nombre||'%' AND gh.estado != 'ELIMINADO';
+			WHERE UPPER(gh.nombre) LIKE '%'||UPPER(p_nombre)||'%' AND gh.estado != 'ELIMINADO';
 END
 $BODY$;
 
@@ -898,7 +897,7 @@ AS $BODY$
 			INNER JOIN deporte dep on gh.id_deporte = dep.id
 			INNER JOIN docente d on gh.id_docente = d.id
 			INNER JOIN ambiente a on gh.id_ambiente = a.id
-			WHERE nombre LIKE '%'||p_nombre||'%';
+			WHERE UPPER(gh.nombre) LIKE '%'||UPPER(p_nombre)||'%';
 END
 $BODY$;
 

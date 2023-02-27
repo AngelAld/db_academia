@@ -132,9 +132,15 @@ CREATE TABLE TIPO_DOC_ID (
   desc_larga varchar(255) NOT NULL, 
   desc_corta varchar(255) NOT NULL, 
   PRIMARY KEY (id));
+CREATE TABLE ROLES (
+  id     SERIAL NOT NULL,
+  nombre varchar(50) NOT NULL,
+  estado varchar(12) NOT NULL
+  PRIMARY KEY(id));
 CREATE TABLE USUARIO (
   id      SERIAL NOT NULL, 
-  id_rol  int4 NOT NULL, 
+  id_rol  int4 NOT NULL,
+  foreign key(id_rol) references roles(id),
   nombres varchar(255) NOT NULL UNIQUE, 
   usuario varchar(255) NOT NULL UNIQUE, 
   clave   varchar(255) NOT NULL, 
@@ -142,6 +148,9 @@ CREATE TABLE USUARIO (
   email   varchar(255) NOT NULL, 
   estado  varchar(12) NOT NULL, 
   PRIMARY KEY (id));
+
+
+
 ALTER TABLE GRUPO_HORARIO ADD CONSTRAINT FKGRUPO_HORA389472 FOREIGN KEY (id_deporte) REFERENCES DEPORTE (id);
 ALTER TABLE GRUPO_HORARIO ADD CONSTRAINT FKGRUPO_HORA420958 FOREIGN KEY (id_docente) REFERENCES DOCENTE (id);
 ALTER TABLE GRUPO_HORARIO ADD CONSTRAINT FKGRUPO_HORA749933 FOREIGN KEY (id_ambiente) REFERENCES AMBIENTE (id);
