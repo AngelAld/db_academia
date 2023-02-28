@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS ROL CASCADE;
 DROP TABLE IF EXISTS TICKET CASCADE;
 DROP TABLE IF EXISTS TIPO_DOC_ID CASCADE;
 DROP TABLE IF EXISTS USUARIO CASCADE;
-
+DROP TABLE IF EXISTS ROLES CASCADE;
 
 
 CREATE TABLE ALUMNO (
@@ -92,8 +92,9 @@ CREATE TABLE GRUPO_HORARIO (
   f_fin       date NOT NULL, 
   hora_inicio int4 NOT NULL, 
   hora_fin    int4 NOT NULL, 
-  estado      varchar(12) NOT NULL, 
-  id_ambiente int4 NOT NULL, 
+  estado      varchar(12) NOT NULL,
+  id_ambiente int4 NOT NULL,
+  costo       numeric(8, 2) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE MATRICULA (
   id          SERIAL NOT NULL, 

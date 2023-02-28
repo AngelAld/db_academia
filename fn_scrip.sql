@@ -1,6 +1,8 @@
 DROP FUNCTION IF EXISTS func_login;
 DROP FUNCTION IF EXISTS func_listar_usuarios;
 DROP FUNCTION IF EXISTS func_buscar_usuario_id;
+DROP FUNCTION func_buscar_grupo_horario_fechas;
+DROP FUNCTION func_buscar_grupo_horario_fechas_admin;
 
 /* ROLES */
 CREATE OR REPLACE FUNCTION func_listar_roles()
@@ -788,6 +790,7 @@ RETURNS table(
   hora_fin    int, 
   estado      varchar(12), 
   id_ambiente int,
+  costo numeric(8, 2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -820,6 +823,7 @@ RETURNS table(
   hora_fin    int, 
   estado      varchar(12), 
   id_ambiente int,
+	costo numeric(8, 2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -840,7 +844,6 @@ AS $BODY$
 $BODY$;
 
 
-
 CREATE OR REPLACE FUNCTION func_buscar_grupo_horario
 (p_id INT
 )
@@ -855,6 +858,7 @@ RETURNS table(
   hora_fin    int, 
   estado      varchar(12), 
   id_ambiente int,
+  costo numeric(8, 2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -892,6 +896,7 @@ RETURNS table(
   hora_fin    int, 
   estado      varchar(12), 
   id_ambiente int,
+  costo numeric(8, 2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -913,7 +918,6 @@ END
 $BODY$;
 
 
-
 CREATE OR REPLACE FUNCTION func_buscar_grupo_horario_nombres
 (p_nombre VARCHAR(100)
 )
@@ -926,8 +930,9 @@ RETURNS table(
   f_fin       date,
   hora_inicio int,
   hora_fin    int, 
-  estado      varchar(12), 
+  estado      varchar(12),
   id_ambiente int,
+  costo numeric(8, 2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -949,6 +954,7 @@ END
 $BODY$;
 
 
+
 CREATE OR REPLACE FUNCTION func_buscar_grupo_horario_nombres_admin 
 (p_nombre VARCHAR(100)
 )
@@ -963,6 +969,7 @@ RETURNS table(
   hora_fin    int, 
   estado      varchar(12), 
   id_ambiente int,
+	costo numeric(8, 2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -1000,7 +1007,8 @@ RETURNS table(
   hora_inicio int,
   hora_fin    int, 
   estado      varchar(12), 
-  id_ambiente int,
+  id_ambiente int, 
+	costo numeric(8,2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -1021,7 +1029,6 @@ AS $BODY$
 END
 $BODY$;
 
-
 CREATE OR REPLACE FUNCTION func_buscar_grupo_horario_fechas_admin
 (
 	p_fecha1 date,
@@ -1037,7 +1044,8 @@ RETURNS table(
   hora_inicio int,
   hora_fin    int, 
   estado      varchar(12), 
-  id_ambiente int,
+  id_ambiente int, 
+	costo numeric(8,2),
   deporte varchar,
   docente varchar,
   ambiente varchar
@@ -1070,6 +1078,7 @@ CREATE OR REPLACE PROCEDURE sp_registrar_grupo_horario
   p_hora_fin    int, 
   p_estado      varchar(12), 
   p_id_ambiente int,
+  p_costo       numeric(8,2),
   OUT msge varchar(100)
 )
 LANGUAGE 'plpgsql'
@@ -1078,8 +1087,8 @@ BEGIN
  	IF(EXISTS(SELECT * FROM grupo_horario WHERE nombre = p_nombre))THEN
  		msge:=  'El grupo_horario: '||p_nombre||', ya existe';
 	ELSE
-		INSERT INTO grupo_horario(nombre, id_deporte, id_docente, f_inicio, f_fin, hora_inicio, hora_fin, estado, id_ambiente) 
-		VALUES(p_nombre, p_id_deporte, p_id_docente, p_f_inicio, p_f_fin, p_hora_inicio, p_hora_fin, p_estado, p_id_ambiente);
+		INSERT INTO grupo_horario(nombre, id_deporte, id_docente, f_inicio, f_fin, hora_inicio, hora_fin, estado, id_ambiente, costo) 
+		VALUES(p_nombre, p_id_deporte, p_id_docente, p_f_inicio, p_f_fin, p_hora_inicio, p_hora_fin, p_estado, p_id_ambiente, p_costo);
 		msge:=  'Registrado correctamente';
 	END IF;
 END
@@ -1097,6 +1106,7 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_grupo_horario
   p_hora_fin    int, 
   p_estado      varchar(12), 
   p_id_ambiente int,
+  p_costo       numeric(8,2),
   OUT msge varchar(100)
 )
 LANGUAGE 'plpgsql'
@@ -1106,7 +1116,7 @@ BEGIN
  		msge:=  'El grupo_horario: '||p_nombre||', ya existe';
 	ELSE
 		UPDATE grupo_horario SET nombre = p_nombre, id_deporte = p_id_deporte, id_docente = p_id_docente, f_inicio = p_f_inicio, 
-		f_fin = p_f_fin, hora_inicio = p_hora_inicio, hora_fin = p_hora_fin, estado = p_estado, id_ambiente = p_id_ambiente WHERE id = p_id;
+		f_fin = p_f_fin, hora_inicio = p_hora_inicio, hora_fin = p_hora_fin, estado = p_estado, id_ambiente = p_id_ambiente, costo=p_costo WHERE id = p_id;
 		msge:=  'Actualizado correctamente';
 	END IF;
 END
